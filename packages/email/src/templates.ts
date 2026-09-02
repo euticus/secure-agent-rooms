@@ -16,6 +16,22 @@ export interface TemplateContext {
   recipientName: string;
 }
 
+/**
+ * Strip anything that could break out of a header field.
+ *
+ * Room names, action names and organization names are user-controlled and end
+ * up in Subject lines. CR/LF there is the classic header-injection vector, so
+ * they are removed here rather than trusting the mail library to encode them —
+ * several nodemailer CVEs have been exactly this class of bug.
+ */
+export function headerSafe(value: string, max = 160): string {
+  return value
+    .replace(/[\r\n\u2028\u2029\0]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, max);
+}
+
 const FOOTER =
   "You are receiving this because you administer an organization using Secure Agent Rooms. " +
   "Manage notifications in your account settings.";
@@ -58,9 +74,11 @@ export interface ApprovalEmailInput extends TemplateContext {
 
 export function approvalPendingEmail(input: ApprovalEmailInput): EmailMessage {
   const url = `${input.appUrl}/rooms/${input.roomId}`;
+  const what = headerSafe(input.what, 80);
+  const roomName = headerSafe(input.roomName);
   const title = input.reminder
-    ? `Still waiting: approve "${input.what}" in ${input.roomName}`
-    : `Approval needed: "${input.what}" in ${input.roomName}`;
+    ? `Still waiting: approve "${what}" in ${roomName}`
+    : `Approval needed: "${what}" in ${roomName}`;
   const lines = [
     `Hi ${input.recipientName},`,
     input.reminder
@@ -88,7 +106,7 @@ export interface InvitationEmailInput extends TemplateContext {
 
 export function invitationEmail(input: InvitationEmailInput): EmailMessage {
   const url = `${input.appUrl}/invite?token=${encodeURIComponent(input.token)}`;
-  const title = `${input.invitingOrganization} invited you to collaborate`;
+  const title = `${headerSafe(input.invitingOrganization)} invited you to collaborate`;
   const lines = [
     `${input.invitingOrganization} would like your AI agent to work with theirs on "${input.roomName}".`,
     ...(input.objective ? [`The task: ${input.objective}`] : []),
@@ -112,7 +130,7 @@ export interface RoomEventEmailInput extends TemplateContext {
 
 export function completionProposedEmail(input: RoomEventEmailInput): EmailMessage {
   const url = `${input.appUrl}/rooms/${input.roomId}`;
-  const title = `"${input.roomName}" is ready for your sign-off`;
+  const title = `"${headerSafe(input.roomName)}" is ready for your sign-off`;
   const lines = [
     `Hi ${input.recipientName},`,
     "An agent has proposed that the task is complete. Verify the evidence attached to each checklist item, then approve completion — the room only completes when both organizations approve.",
@@ -128,7 +146,7 @@ export function completionProposedEmail(input: RoomEventEmailInput): EmailMessag
 
 export function securityAlertEmail(input: RoomEventEmailInput & { severity: string; kind: string }): EmailMessage {
   const url = `${input.appUrl}/rooms/${input.roomId}`;
-  const title = `Security alert in "${input.roomName}"`;
+  const title = `Security alert in "${headerSafe(input.roomName)}"`;
   const lines = [
     `Hi ${input.recipientName},`,
     `A ${input.severity.toLowerCase()} alert was raised: ${input.kind.replaceAll("_", " ")}.`,
@@ -149,7 +167,7 @@ export interface WelcomeEmailInput extends TemplateContext {
 
 export function welcomeEmail(input: WelcomeEmailInput): EmailMessage {
   const url = `${input.appUrl}/dashboard`;
-  const title = `${input.organizationName} is set up on Secure Agent Rooms`;
+  const title = `${headerSafe(input.organizationName)} is set up on Secure Agent Rooms`;
   const lines = [
     `Hi ${input.recipientName},`,
     "Your organization is ready, and a sandbox agent is already connected — so you can run a complete collaboration, including a blocked credential disclosure and an approval gate, without wiring up an LLM or an API key.",

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   ConsoleEmailSender,
+  headerSafe,
   MemoryEmailSender,
   approvalPendingEmail,
   createEmailSender,
@@ -71,6 +72,33 @@ describe("template disclosure rules", () => {
     expect(msg.subject).toContain("Security alert");
     expect(msg.text).toContain("room quarantined");
     expect(msg.text).toContain("https://booth.example/rooms/room_9");
+  });
+});
+
+describe("header injection", () => {
+  it("strips CR/LF from values that reach a Subject line", () => {
+    expect(headerSafe("Phoenix\r\nBcc: attacker@evil.example")).toBe(
+      "Phoenix Bcc: attacker@evil.example",
+    );
+    expect(headerSafe("a\nb\rc")).toBe("a b c");
+    expect(headerSafe("x\u2028y\u2029z")).toBe("x y z");
+    expect(headerSafe("nul\0byte")).toBe("nul byte");
+  });
+
+  it("caps length so a huge room name cannot bloat a header", () => {
+    expect(headerSafe("x".repeat(500)).length).toBe(160);
+  });
+
+  it("no subject can contain a newline, whatever the room is called", () => {
+    const hostile = 'Room\r\nBcc: attacker@evil.example\r\nSubject: spoofed';
+    const msgs = [
+      approvalPendingEmail({ ...base, roomName: hostile, roomId: "r", what: hostile, risk: "HIGH", requestedByOrg: hostile }),
+      invitationEmail({ ...base, invitingOrganization: hostile, roomName: hostile, objective: null, token: "t", expiresAt: new Date().toISOString() }),
+      securityAlertEmail({ ...base, roomName: hostile, roomId: "r", severity: "HIGH", kind: "k", detail: "d" }),
+    ];
+    for (const m of msgs) {
+      expect(m.subject).not.toMatch(/[\r\n]/);
+    }
   });
 });
 

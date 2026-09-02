@@ -3,3 +3,10 @@ packages:
   - "apps/*"
 allowBuilds:
   esbuild: true
+
+# Force a patched postcss everywhere. Next.js pins 8.4.31 transitively, which
+# carries path-traversal and arbitrary-file-read advisories in its source-map
+# loading. Build-time rather than runtime exposure, but there is no reason to
+# ship it.
+overrides:
+  postcss: ">=8.5.23"
