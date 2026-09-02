@@ -1,6 +1,6 @@
 # Secure Agent Rooms — API
 # Multi-stage build; runs as a non-root user with a compiled dependency tree.
-FROM node:22-slim AS base
+FROM node:26-slim AS base
 ENV PNPM_HOME=/pnpm PATH=/pnpm:$PATH
 RUN corepack enable
 
