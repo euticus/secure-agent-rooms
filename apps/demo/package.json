@@ -11,5 +11,5 @@
     "@booth/agents": "workspace:*",
     "@booth/shared": "workspace:*"
   },
-  "devDependencies": { "tsx": "^4.20.3" }
+  "devDependencies": { "tsx": "^4.23.13" }
 }
