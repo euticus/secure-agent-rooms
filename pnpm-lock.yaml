@@ -172,8 +172,8 @@ importers:
         specifier: workspace:*
         version: link:../shared
       nodemailer:
-        specifier: ^6.9.16
-        version: 6.10.1
+        specifier: ^9.0.6
+        version: 9.0.6
     devDependencies:
       '@types/nodemailer':
         specifier: ^6.4.17
@@ -1211,8 +1211,8 @@ packages:
       sass:
         optional: true
 
-  nodemailer@6.10.1:
-    resolution: {integrity: sha512-Z+iLaBGVaSjbIzQ4pX6XV41HrooLsQ10ZWPUehGmuantvzWoDVBnmsdUcOIDM1t+yPor5pDhVlDESgOMEGxhHA==}
+  nodemailer@9.0.6:
+    resolution: {integrity: sha512-IQUGFdhdGwI9+AWX+FpUt4DLmvFaOjTMEoneTIWX/RXxuy1TdenPwWrvFMSfLkPKl+HQEXWuSAxEMMbPYXtBmg==}
     engines: {node: '>=6.0.0'}
 
   obliterator@2.0.5:
@@ -2362,7 +2362,7 @@ snapshots:
       - '@types/node'
       - babel-plugin-macros
 
-  nodemailer@6.10.1: {}
+  nodemailer@9.0.6: {}
 
   obliterator@2.0.5: {}
 

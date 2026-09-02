@@ -8,7 +8,7 @@
   "scripts": { "typecheck": "tsc --noEmit", "test": "vitest run" },
   "dependencies": {
     "@booth/shared": "workspace:*",
-    "nodemailer": "^6.9.16"
+    "nodemailer": "^9.0.6"
   },
   "devDependencies": { "@types/nodemailer": "^6.4.17" }
 }
