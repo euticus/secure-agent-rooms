@@ -1,0 +1,15 @@
+{
+  "name": "@booth/demo",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "demo": "tsx src/demo.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@booth/core": "workspace:*",
+    "@booth/agents": "workspace:*",
+    "@booth/shared": "workspace:*"
+  },
+  "devDependencies": { "tsx": "^4.20.3" }
+}

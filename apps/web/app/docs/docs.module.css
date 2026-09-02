@@ -1,0 +1,168 @@
+/* Documentation layout — same visual world as the landing page, tuned for reading. */
+
+.layout {
+  display: grid;
+  grid-template-columns: 210px minmax(0, 1fr);
+  gap: 48px;
+  padding: 44px 0 24px;
+  align-items: start;
+}
+@media (max-width: 860px) {
+  .layout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+.sidebar {
+  position: sticky;
+  top: 24px;
+}
+@media (max-width: 860px) {
+  .sidebar {
+    position: static;
+  }
+}
+.sidebarTitle {
+  font-family: var(--display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+.toc {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-left: 1px solid var(--rule);
+}
+.toc a {
+  font-family: var(--display);
+  font-size: 14px;
+  color: var(--muted);
+  text-decoration: none;
+  padding: 6px 0 6px 14px;
+  margin-left: -1px;
+  border-left: 2px solid transparent;
+}
+.toc a:hover,
+.toc a:focus-visible {
+  color: var(--fg);
+  border-left-color: var(--pass);
+}
+
+.content {
+  min-width: 0;
+  max-width: 72ch;
+}
+.h1 {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(32px, 4vw, 44px);
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  margin: 0 0 14px;
+}
+.lede {
+  font-size: 18px;
+  color: var(--muted);
+  margin: 0 0 8px;
+}
+.section {
+  padding: 34px 0;
+  border-top: 1px solid var(--rule);
+}
+.section:first-of-type {
+  border-top: 0;
+}
+.h2 {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 25px;
+  letter-spacing: -0.02em;
+  margin: 0 0 14px;
+  scroll-margin-top: 20px;
+}
+.section p {
+  margin: 0 0 14px;
+}
+.section a {
+  color: var(--pass);
+}
+.section code {
+  font-family: var(--mono);
+  font-size: 0.85em;
+  background: var(--card-2);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+/* Tailwind's preflight strips list markers; restore them here. */
+.steps {
+  margin: 0 0 16px;
+  padding-left: 22px;
+  list-style: decimal outside;
+}
+.steps li {
+  margin-bottom: 9px;
+}
+
+.defs {
+  margin: 0;
+  display: grid;
+  gap: 4px;
+}
+.defs dt {
+  font-family: var(--display);
+  font-weight: 600;
+  margin-top: 12px;
+}
+.defs dd {
+  margin: 0;
+  color: var(--muted);
+}
+
+.code {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.6;
+  background: var(--card-2);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 14px 16px;
+  overflow-x: auto;
+  margin: 0 0 16px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 16px;
+  font-size: 15px;
+  display: block;
+  overflow-x: auto;
+}
+.table th,
+.table td {
+  text-align: left;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+.table th {
+  font-family: var(--display);
+  font-size: 12px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+}
+.table td {
+  color: var(--muted);
+}
+.table td:first-child {
+  color: var(--fg);
+  white-space: nowrap;
+}

@@ -1,0 +1,15 @@
+# Fly.io deployment for the web app.
+#   fly deploy --config deploy/fly.web.toml \
+#     --build-arg NEXT_PUBLIC_API_BASE=https://<your-api-app>.fly.dev
+app = "booth-web"
+primary_region = "iad"
+
+[build]
+  dockerfile = "../apps/web/Dockerfile"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = "suspend"
+  auto_start_machines = true
+  min_machines_running = 1

@@ -1,0 +1,25 @@
+{
+  "name": "@booth/api",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "tsx src/server.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@booth/core": "workspace:*",
+    "@booth/database": "workspace:*",
+    "@booth/shared": "workspace:*",
+    "@booth/agents": "workspace:*",
+    "@fastify/cors": "^10.0.0",
+    "@fastify/swagger": "^9.4.0",
+    "fastify": "^5.2.0",
+    "fastify-type-provider-zod": "^4.0.2",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "tsx": "^4.20.3"
+  }
+}

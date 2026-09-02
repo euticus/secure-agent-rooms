@@ -1,0 +1,24 @@
+{
+  "name": "@booth/core",
+  "version": "0.1.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:security": "vitest run test/security"
+  },
+  "dependencies": {
+    "@booth/shared": "workspace:*",
+    "@booth/dlp": "workspace:*",
+    "@booth/policy": "workspace:*",
+    "@booth/audit": "workspace:*",
+    "@booth/database": "workspace:*",
+    "@booth/agents": "workspace:*",
+    "@booth/email": "workspace:*"
+  }
+}

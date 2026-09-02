@@ -1,0 +1,488 @@
+/*
+ * Landing page styles.
+ *
+ * Visual world: a customs checkpoint between two organizations. The page is
+ * split by a boundary seam; payloads cross it and are stamped pass / hold /
+ * stop. The three semantic seals are the product's own vocabulary, so they
+ * carry the palette rather than a decorative accent.
+ */
+
+.page {
+  /* Light ground (default and un-stamped system-light). */
+  --ink: #0e1a20;
+  --paper: #f2f4f1;
+  --surface: #ffffff;
+  --surface-2: #e8ece8;
+  --steel: #5c7480;
+  --steel-soft: #8fa3ac;
+  --rule: #d3dbd7;
+  --pass: #2f6b52;
+  --hold: #a8781f;
+  --stop: #b4472c;
+
+  --bg: var(--paper);
+  --fg: var(--ink);
+  --muted: var(--steel);
+  --card: var(--surface);
+  --card-2: var(--surface-2);
+
+  --display: var(--font-archivo), "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --body: var(--font-source-serif), "Source Serif 4", Georgia, serif;
+  --mono: var(--font-mono), "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--body);
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+/* System-dark, unless the viewer explicitly chose light. */
+@media (prefers-color-scheme: dark) {
+  .page:not([data-theme="light"]) {
+    --bg: #0b1418;
+    --fg: #e7ede9;
+    --muted: #93a7b0;
+    --card: #111e24;
+    --card-2: #16262d;
+    --rule: #22343c;
+    --pass: #57a883;
+    --hold: #d6a545;
+    --stop: #e0725a;
+  }
+}
+/* Explicit dark choice wins in the other direction. */
+.page[data-theme="dark"] {
+  --bg: #0b1418;
+  --fg: #e7ede9;
+  --muted: #93a7b0;
+  --card: #111e24;
+  --card-2: #16262d;
+  --rule: #22343c;
+  --pass: #57a883;
+  --hold: #d6a545;
+  --stop: #e0725a;
+}
+
+.page * {
+  box-sizing: border-box;
+}
+
+.wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ---- top bar ---------------------------------------------------------- */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--rule);
+  flex-wrap: wrap;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--display);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  font-size: 18px;
+  color: var(--fg);
+  text-decoration: none;
+}
+.seal {
+  width: 13px;
+  height: 13px;
+  border-radius: 2px;
+  background: var(--pass);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--pass) 20%, transparent);
+}
+.topnav {
+  display: flex;
+  gap: 22px;
+  align-items: center;
+  font-family: var(--display);
+  font-size: 14px;
+}
+.topnav a {
+  color: var(--muted);
+  text-decoration: none;
+}
+.topnav a:hover,
+.topnav a:focus-visible {
+  color: var(--fg);
+}
+.cta {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 9px 16px;
+  border-radius: 3px;
+  background: var(--fg);
+  color: var(--bg);
+  text-decoration: none;
+  border: 1px solid var(--fg);
+  display: inline-block;
+}
+.ctaGhost {
+  composes: cta;
+  background: transparent;
+  color: var(--fg);
+  border-color: var(--rule);
+}
+
+/* ---- hero ------------------------------------------------------------- */
+
+.hero {
+  padding: 72px 0 56px;
+  display: grid;
+  gap: 44px;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .hero {
+    grid-template-columns: 1fr;
+    padding-top: 48px;
+  }
+}
+.eyebrow {
+  font-family: var(--display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 18px;
+}
+.h1 {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(38px, 5.4vw, 62px);
+  line-height: 1.02;
+  letter-spacing: -0.028em;
+  text-wrap: balance;
+  margin: 0 0 20px;
+}
+.h1 em {
+  font-style: normal;
+  color: var(--pass);
+}
+.lede {
+  font-size: 19px;
+  line-height: 1.55;
+  color: var(--fg);
+  max-width: 62ch;
+  margin: 0 0 14px;
+}
+.subLede {
+  color: var(--muted);
+  max-width: 62ch;
+  margin: 0 0 28px;
+}
+.heroActions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.heroNote {
+  font-family: var(--display);
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 14px;
+}
+
+/* ---- the boundary device ---------------------------------------------- */
+
+.gate {
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  background: var(--card);
+  overflow: hidden;
+}
+.gateHead {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--card-2);
+  font-family: var(--display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.gateHead span:last-child {
+  text-align: right;
+}
+.gateBoundary {
+  font-size: 10px;
+  padding: 3px 8px;
+  border: 1px dashed var(--rule);
+  border-radius: 999px;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+}
+.gateBody {
+  padding: 4px 0;
+}
+.crossing {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 13px 14px;
+  border-bottom: 1px solid var(--rule);
+}
+.crossing:last-child {
+  border-bottom: 0;
+}
+.payload {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--fg);
+  word-break: break-word;
+}
+.payloadWho {
+  display: block;
+  font-family: var(--display);
+  font-size: 10.5px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.stamp {
+  font-family: var(--display);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 5px 9px;
+  border-radius: 2px;
+  border: 1.5px solid currentColor;
+  white-space: nowrap;
+  transform: rotate(-3deg);
+}
+.stampPass {
+  composes: stamp;
+  color: var(--pass);
+}
+.stampHold {
+  composes: stamp;
+  color: var(--hold);
+}
+.stampStop {
+  composes: stamp;
+  color: var(--stop);
+}
+.gateFoot {
+  padding: 11px 14px;
+  border-top: 1px solid var(--rule);
+  background: var(--card-2);
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+/* Reveal each crossing in sequence — the mechanism, not decoration. */
+.crossing {
+  animation: settle 620ms ease-out both;
+}
+.crossing:nth-child(1) { animation-delay: 120ms; }
+.crossing:nth-child(2) { animation-delay: 380ms; }
+.crossing:nth-child(3) { animation-delay: 640ms; }
+@keyframes settle {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .crossing {
+    animation: none;
+  }
+}
+
+/* ---- generic sections ------------------------------------------------- */
+
+.section {
+  padding: 60px 0;
+  border-top: 1px solid var(--rule);
+}
+.sectionHead {
+  max-width: 66ch;
+  margin-bottom: 32px;
+}
+.h2 {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(25px, 3vw, 33px);
+  letter-spacing: -0.02em;
+  line-height: 1.12;
+  text-wrap: balance;
+  margin: 0 0 12px;
+}
+.sectionLede {
+  color: var(--muted);
+  margin: 0;
+}
+
+/* Six stages read as a 3x2 block rather than an uneven 4+2 wrap. */
+.stages {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+@media (max-width: 900px) {
+  .stages {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 560px) {
+  .stages {
+    grid-template-columns: 1fr;
+  }
+}
+.stage {
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 18px;
+  background: var(--card);
+}
+.stageNum {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 8px;
+}
+.stageTitle {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 16px;
+  margin: 0 0 6px;
+}
+.stageBody {
+  font-size: 15px;
+  color: var(--muted);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.split {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+.card {
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 22px;
+  background: var(--card);
+}
+.cardTitle {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 17px;
+  margin: 0 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 2px;
+  flex: none;
+}
+.dotPass { composes: dot; background: var(--pass); }
+.dotHold { composes: dot; background: var(--hold); }
+.dotStop { composes: dot; background: var(--stop); }
+.cardBody {
+  margin: 0;
+  color: var(--muted);
+  font-size: 15.5px;
+}
+.cardBody code {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--fg);
+}
+
+.list {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--muted);
+  list-style: disc outside;
+}
+.list li {
+  margin-bottom: 7px;
+}
+.list strong {
+  color: var(--fg);
+  font-weight: 600;
+}
+
+.vendors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 18px;
+}
+.vendor {
+  font-family: var(--display);
+  font-size: 13px;
+  padding: 7px 13px;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  color: var(--muted);
+  background: var(--card);
+}
+
+/* Honest-limits block: quieter, set apart. */
+.limits {
+  border-left: 3px solid var(--stop);
+  padding: 4px 0 4px 20px;
+  max-width: 70ch;
+}
+
+.finalCta {
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  background: var(--card);
+  padding: 34px;
+  display: flex;
+  gap: 22px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.footer {
+  border-top: 1px solid var(--rule);
+  padding: 26px 0 48px;
+  color: var(--muted);
+  font-size: 14px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.footer a {
+  color: var(--muted);
+}
+
+.page a:focus-visible,
+.page button:focus-visible {
+  outline: 2px solid var(--pass);
+  outline-offset: 2px;
+}

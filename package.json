@@ -1,0 +1,26 @@
+{
+  "name": "telephone-booth",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Secure cross-organization agent collaboration platform (Secure Agent Rooms)",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@11.24.0",
+  "scripts": {
+    "build": "pnpm -r --filter './packages/**' run build",
+    "typecheck": "pnpm -r run typecheck",
+    "test": "pnpm -r run test",
+    "test:security": "pnpm --filter @booth/core run test:security",
+    "demo": "pnpm --filter @booth/demo run demo",
+    "api": "pnpm --filter @booth/api run dev",
+    "web": "pnpm --filter @booth/web run dev"
+  },
+  "devDependencies": {
+    "@types/node": "^24.13.3",
+    "tsx": "^4.20.3",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  }
+}

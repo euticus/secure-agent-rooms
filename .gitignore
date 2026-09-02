@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.next/
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+coverage/
+.playwright-mcp/
+/shot-*.png   # stray Playwright captures at the repo root only

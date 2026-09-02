@@ -1,0 +1,90 @@
+# Full local/self-hosted stack: Postgres + API + Web.
+#
+#   cp .env.example .env   # set BOOTH_AUDIT_KEY (32+ bytes) at minimum
+#   docker compose up --build
+#
+# The API refuses to start in production mode without BOOTH_AUDIT_KEY and
+# DATABASE_URL, and refuses to enable dev auth — that is intentional.
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-booth}
+      POSTGRES_USER: ${POSTGRES_USER:-booth}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-booth_local_dev}
+    ports: ["5432:5432"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-booth}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  migrate:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER:-booth}:${POSTGRES_PASSWORD:-booth_local_dev}@postgres:5432/${POSTGRES_DB:-booth}
+    working_dir: /repo/packages/database
+    command: ["node", "--import", "tsx", "src/cli.ts"]
+    restart: "no"
+
+  # Local mail server so notifications are visible end to end.
+  # Web UI on http://localhost:8025 — replace with real SMTP in production.
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+      mailpit:
+        condition: service_started
+    environment:
+      BOOTH_ENV: ${BOOTH_ENV:-production}
+      DATABASE_URL: postgres://${POSTGRES_USER:-booth}:${POSTGRES_PASSWORD:-booth_local_dev}@postgres:5432/${POSTGRES_DB:-booth}
+      BOOTH_AUDIT_KEY: ${BOOTH_AUDIT_KEY:?BOOTH_AUDIT_KEY is required (32+ bytes)}
+      BOOTH_DEV_AUTH: ${BOOTH_DEV_AUTH:-false}
+      WEB_ORIGIN: ${WEB_ORIGIN:-http://localhost:3000}
+      HOST: 0.0.0.0
+      PORT: 4000
+      # Email notifications. Point SMTP_* at your real provider in production.
+      SMTP_HOST: ${SMTP_HOST:-mailpit}
+      SMTP_PORT: ${SMTP_PORT:-1025}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      EMAIL_FROM: ${EMAIL_FROM:-Secure Agent Rooms <no-reply@localhost>}
+      APP_URL: ${APP_URL:-http://localhost:3000}
+    ports: ["4000:4000"]
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE: ${NEXT_PUBLIC_API_BASE:-http://localhost:4000}
+    environment:
+      # Runtime override — the browser reads this from /config.js, so changing
+      # the API URL here is a restart rather than a rebuild.
+      API_BASE_URL: ${API_BASE_URL:-http://localhost:4000}
+    depends_on: [api]
+    ports: ["3000:3000"]
+
+volumes:
+  pgdata:

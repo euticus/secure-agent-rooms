@@ -1,0 +1,92 @@
+# Render Blueprint — the whole product in one deploy.
+#
+#   1. Push this repo to GitHub.
+#   2. Render → New → Blueprint → pick this repo → it reads this file.
+#   3. Render asks for the values marked `sync: false` below. You can leave the
+#      two URLs blank on the first pass and fill them in once Render has
+#      assigned them (see docs/deployment.md).
+#
+# IMPORTANT: the API must not sleep. Its background runtime is what advances
+# agent turns and delivers notifications, so a plan that spins down on idle
+# means rooms silently stop progressing. `starter` and above stay running.
+
+services:
+  # ---------------------------------------------------------------- API ----
+  - type: web
+    name: booth-api
+    runtime: docker
+    dockerfilePath: ./apps/api/Dockerfile
+    dockerContext: .
+    region: oregon
+    plan: starter
+    # Single instance, deliberately. The room-orchestration runtime, the
+    # rate limiter and the idempotency cache are all in-process: a second
+    # instance would double-drive rooms and let each one spend the room's
+    # budget independently. Keep at 1 until Redis + a durable room lock land.
+    numInstances: 1
+    # Readiness, not liveness: /readyz touches the database, so an instance
+    # pointed at an unreachable or unmigrated database fails the probe
+    # instead of serving 500s.
+    healthCheckPath: /readyz
+    envVars:
+      - key: BOOTH_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0
+      # Passwordless dev sign-in. Refused in production anyway; explicit here.
+      - key: BOOTH_DEV_AUTH
+        value: "false"
+      # Signs the tamper-evident audit checkpoints. Must be 32+ bytes — if the
+      # service fails to boot complaining about its length, replace it with
+      # `openssl rand -base64 48`.
+      - key: BOOTH_AUDIT_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: booth-postgres
+          property: connectionString
+      # Browser origin allowed by CORS — the web service's URL.
+      - key: WEB_ORIGIN
+        sync: false
+      # Public URL used in email links — the same web service URL.
+      - key: APP_URL
+        sync: false
+      # ---- Email notifications (optional, but approvals are much better with
+      # them). Leave SMTP_HOST unset and the product runs fine without email.
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      # Use a domain you control, with SPF and DKIM configured, or invitations
+      # will land in spam.
+      - key: EMAIL_FROM
+        sync: false
+      # ---- Closed beta gate (optional). When set, self-serve signup requires
+      # this key — but a live room invitation also grants signup, so the people
+      # your customers invite are never dead-ended.
+      - key: BOOTH_SIGNUP_KEY
+        sync: false
+
+  # ---------------------------------------------------------------- Web ----
+  - type: web
+    name: booth-web
+    runtime: docker
+    dockerfilePath: ./apps/web/Dockerfile
+    dockerContext: .
+    region: oregon
+    plan: starter
+    envVars:
+      # Read at runtime and served to the browser by /config.js, so pointing
+      # the front end at the API is a restart, not a rebuild.
+      - key: API_BASE_URL
+        sync: false
+
+databases:
+  - name: booth-postgres
+    databaseName: booth
+    plan: basic-256mb
+    region: oregon

@@ -1,0 +1,35 @@
+# Fly.io deployment for the API.
+#   fly launch --no-deploy --copy-config --config deploy/fly.api.toml
+#   fly postgres create && fly postgres attach <db>      # sets DATABASE_URL
+#   fly secrets set BOOTH_AUDIT_KEY="$(openssl rand -base64 48)"
+#   fly secrets set WEB_ORIGIN="https://<your-web-app>.fly.dev"
+#   fly deploy --config deploy/fly.api.toml
+#   fly scale count 1 --config deploy/fly.api.toml   # REQUIRED: see below
+app = "booth-api"
+primary_region = "iad"
+
+[build]
+  dockerfile = "../apps/api/Dockerfile"
+
+[env]
+  BOOTH_ENV = "production"
+  BOOTH_DEV_AUTH = "false"
+  HOST = "0.0.0.0"
+  PORT = "4000"
+
+# Single instance only: the room-orchestration runtime, rate limiter and
+# idempotency cache are in-process. Two machines would double-drive rooms and
+# bypass per-room budget caps. Enforce with `fly scale count 1`.
+[http_service]
+  internal_port = 4000
+  force_https = true
+  auto_stop_machines = "suspend"
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [[http_service.checks]]
+    grace_period = "15s"
+    interval = "30s"
+    method = "GET"
+    path = "/readyz"
+    timeout = "5s"
