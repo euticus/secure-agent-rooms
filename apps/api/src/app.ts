@@ -142,6 +142,12 @@ export async function buildApp(opts: BuildAppOptions = {}): Promise<FastifyInsta
   await app.register(cors, {
     origin: ctx.config.webOrigin,
     credentials: true,
+    // Declared explicitly rather than inherited: @fastify/cors v11 narrowed its
+    // default to the CORS-safelisted methods (GET,HEAD,POST), which silently
+    // breaks the team page's PATCH (change role) and DELETE (remove member) in
+    // the browser while every server-side test still passes. Pinning the list
+    // keeps the boundary a property of this file, not of the dependency.
+    methods: ["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   });
 
   await app.register(swagger, {
