@@ -1,5 +1,5 @@
 # Secure Agent Rooms — Web (Next.js standalone output)
-FROM node:22-slim AS base
+FROM node:24-slim AS base
 ENV PNPM_HOME=/pnpm PATH=/pnpm:$PATH
 RUN corepack enable
 

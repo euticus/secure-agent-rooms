@@ -59,8 +59,15 @@ updates:
       prefix: "ci"
 
   # ---- Base images ---------------------------------------------------------
-  # Both services run on node:22-slim; base-image CVEs are the most common way
+  # Both services run on node:24-slim; base-image CVEs are the most common way
   # a container inherits a vulnerability it never introduced.
+  #
+  # Take patch and minor bumps freely. Treat a *major* as a decision, not a
+  # bump: only move to a release that is already Active LTS, and move CI's
+  # node-version in the same commit so the runner and the image never disagree.
+  # Dependabot has no notion of the LTS calendar — it proposed node:26 in
+  # September 2026, seven weeks before 26 entered LTS on 2026-10-28, and that
+  # image could not even build (26 dropped the bundled corepack).
   - package-ecosystem: docker
     directory: "/apps/api"
     schedule:
