@@ -1,0 +1,80 @@
+# Dependency version updates.
+#
+# Security updates are enabled separately in repository settings and open PRs
+# immediately for vulnerabilities. This file covers routine upgrades.
+#
+# Updates are grouped deliberately: a pnpm monorepo with three apps and eight
+# packages generates enough individual PRs to be ignored entirely, and ignored
+# update PRs are worse than none. Patch and minor bumps arrive as one weekly
+# PR per ecosystem; majors come separately because they need real review.
+version: 2
+
+updates:
+  # ---- npm (pnpm workspace; the root lockfile covers every package) --------
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "07:00"
+    open-pull-requests-limit: 5
+    groups:
+      # One PR for the safe stuff.
+      routine:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+      # Types packages move constantly and are low risk.
+      types:
+        patterns: ["@types/*"]
+        update-types: ["major", "minor", "patch"]
+    ignore:
+      # Majors of the things the security model actually rests on should be
+      # deliberate, reviewed upgrades rather than an automated PR.
+      - dependency-name: "fastify"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "next"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "zod"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "pg"
+        update-types: ["version-update:semver-major"]
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps(dev)"
+
+  # ---- GitHub Actions ------------------------------------------------------
+  # Workflow actions are supply chain: a compromised action runs with repo
+  # credentials, so keeping these current matters more than the version numbers
+  # suggest.
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "07:00"
+    groups:
+      actions:
+        patterns: ["*"]
+    commit-message:
+      prefix: "ci"
+
+  # ---- Base images ---------------------------------------------------------
+  # Both services run on node:22-slim; base-image CVEs are the most common way
+  # a container inherits a vulnerability it never introduced.
+  - package-ecosystem: docker
+    directory: "/apps/api"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "07:00"
+    commit-message:
+      prefix: "docker(api)"
+
+  - package-ecosystem: docker
+    directory: "/apps/web"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "07:00"
+    commit-message:
+      prefix: "docker(web)"
