@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@booth/shared": "workspace:*",
-    "nodemailer": "^9.0.1"
+    "nodemailer": "^10.0.9"
   },
   "devDependencies": {
     "@types/nodemailer": "^8.0.1"
