@@ -14,12 +14,12 @@
     "@booth/shared": "workspace:*",
     "@booth/agents": "workspace:*",
     "@fastify/cors": "^11.3.0",
-    "@fastify/swagger": "^9.4.0",
-    "fastify": "^5.2.0",
+    "@fastify/swagger": "^9.9.1",
+    "fastify": "^5.12.5",
     "fastify-type-provider-zod": "^4.0.2",
     "zod": "^3.24.1"
   },
   "devDependencies": {
-    "tsx": "^4.23.13"
+    "tsx": "^4.23.15"
   }
 }
