@@ -15,10 +15,10 @@
   "dependencies": {
     "@booth/shared": "workspace:*",
     "@booth/audit": "workspace:*",
-    "pg": "^8.13.1"
+    "pg": "^8.23.1"
   },
   "devDependencies": {
     "@types/pg": "^8.11.10",
-    "tsx": "^4.23.13"
+    "tsx": "^4.23.15"
   }
 }
